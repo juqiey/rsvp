@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUTUAL AGREEMENT & ATTENDANCE CONTRACT</title>
+    <style>
+        /* --- General Styling --- */
+        body {
+            font-family: 'Times New Roman', serif; /* Classic formal document font */
+            background-color: #f8f8f8;
+            color: #000;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px 60px;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid #000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.6;
+        }
+
+        /* --- Header/Title --- */
+        .title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        /* --- Clause Structure --- */
+        .clause {
+            margin-bottom: 20px;
+        }
+
+        .clause-title {
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* --- Form Elements --- */
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #000;
+            box-sizing: border-box;
+            font-family: 'Times New Roman', serif;
+            font-size: 1em;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Checkbox/Radio Styling */
+        .radio-options {
+            padding: 10px 0;
+        }
+
+        .radio-options label {
+            display: inline-block;
+            font-weight: normal;
+            margin-right: 25px;
+        }
+
+        /* Signature Block */
+        .signature-block {
+            margin-top: 40px;
+            border-top: 1px solid #000;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-field {
+            flex-basis: 45%;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            margin-top: 40px; /* Space for handwritten signature look */
+            padding-bottom: 5px;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        /* --- Button Styling (Seal/Execute) --- */
+        .execute-button {
+            width: 50%;
+            margin: 30px auto 0 auto;
+            display: block;
+            background-color: #333;
+            color: white;
+            padding: 12px;
+            border: 2px solid #000;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Times New Roman', serif;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="title">MUTUAL AGREEMENT AND ATTENDANCE CONTRACT</div>
+    <div class="subtitle">Effective Date: October 25, 2026. Parties: [The Couple] and [The Guest(s)]</div>
+
+    <form action="#" method="POST">
+
+        <div class="clause">
+            <span class="clause-title">1.0 IDENTIFICATION OF PARTY ("THE GUEST")</span>
+            <p style="font-size: 0.9em;">1.1 The Guest hereby identifies themselves as the authorized party to this Agreement:</p>
+            <label for="name">Full Name (Typewritten Signature)</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Primary Contact Email (for Service of Process)</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="clause">
+            <span class="clause-title">2.0 CONFIRMATION OF OBLIGATION (ATTENDANCE)</span>
+            <p style="font-size: 0.9em;">2.1 The Guest must select one of the following binding terms regarding the obligation:</p>
+
+            <div class="radio-options">
+                <label>
+                    <input type="radio" name="attendance" value="Accept" required>
+                    2.1.a. **AGREED & ACCEPTED:** The Guest is duly authorized and will attend the Union ceremony and celebration.
+                </label>
+                <label>
+                    <input type="radio" name="attendance" value="Decline">
+                    2.1.b. **DECLINED & REGRETTED:** The Guest is unable to fulfill the attendance obligation.
+                </label>
+            </div>
+
+            <label for="guests">2.2 Total Number of Authorized Representatives Attending (QTY)</label>
+            <input type="number" id="guests" name="guests" min="1" max="6" value="1" required>
+        </div>
+
+        <div class="clause">
+            <span class="clause-title">3.0 SPECIAL STIPULATIONS AND INDEMNIFICATION</span>
+            <p style="font-size: 0.9em;">3.1 The Guest shall disclose any and all relevant dietary restrictions or allergies that may require special accommodation by the Principals ([The Couple]).</p>
+
+            <label for="dietary">3.1.a. Dietary/Allergy Disclosure (List all applicable stipulations):</label>
+            <input type="text" id="dietary" name="dietary" placeholder="E.g., Restriction: Gluten Intolerance (See Rider A), Severe Allergy: Peanuts.">
+
+            <label for="message">3.2 Rider B: Additional Notes or Requests for the Principals:</label>
+            <textarea id="message" name="message" rows="3" placeholder="I request the attendance of my authorized plus-one, [Guest Name]. I reserve the right to dance enthusiastically."></textarea>
+        </div>
+
+        <div class="signature-block">
+            <div class="signature-field">
+                <label>EXECUTED BY:</label>
+                <div class="signature-line">[Name from 1.1 will be displayed here]</div>
+                <p style="text-align: center; margin-top: 5px; font-size: 0.8em;">The Guest (Digital Signature)</p>
+            </div>
+            <div class="signature-field">
+                <label>DATE OF EXECUTION:</label>
+                <div class="signature-line" id="date-signed">December 17, 2025</div>
+                <p style="text-align: center; margin-top: 5px; font-size: 0.8em;">(Auto-Generated Upon Submission)</p>
+            </div>
+        </div>
+
+        <button type="submit" class="execute-button">Execute & File Contract (Submit RSVP)</button>
+    </form>
+</div>
+
+<script>
+    // Simple JavaScript to auto-populate the execution date (optional)
+    document.getElementById('date-signed').innerText = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+</script>
+</body>
+</html>

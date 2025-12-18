@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP: [Couple's Names] - Corporate Calendar Theme</title>
+    <style>
+        /* --- General Styling --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f9; /* Light corporate background */
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+
+        /* --- Header/Branding --- */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #0056b3; /* Corporate blue line */
+        }
+
+        .header h1 {
+            color: #0056b3;
+            font-size: 2.5em;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header h2 {
+            color: #555;
+            font-size: 1.2em;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        /* --- Calendar/Date Block --- */
+        .calendar-block {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0 30px 0;
+        }
+
+        .date-box {
+            border: 2px solid #0056b3;
+            padding: 10px 20px;
+            text-align: center;
+            margin: 0 10px;
+            border-radius: 4px;
+            background-color: #e6f0ff; /* Light blue fill */
+        }
+
+        .date-box .day-label {
+            font-size: 0.8em;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        .date-box .day-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #0056b3;
+            line-height: 1;
+        }
+
+        .date-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-left: 20px;
+        }
+
+        /* --- Form Styling --- */
+        .form-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px dashed #ccc; /* Subtle separation */
+            border-radius: 4px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #0056b3;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        /* Radio/Checkbox Group for Attendance */
+        .attendance-options input {
+            margin-right: 10px;
+        }
+
+        .attendance-options label {
+            display: inline-block;
+            font-weight: normal;
+            margin-right: 20px;
+            color: #333;
+            cursor: pointer;
+        }
+
+        /* --- Button Styling (CTA) --- */
+        .submit-button {
+            width: 100%;
+            background-color: #0056b3;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-button:hover {
+            background-color: #003d80;
+        }
+
+        /* --- Footer/Notes --- */
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>RSVP Submission</h1>
+        <h2>Corporate Event: The Wedding of [Partner 1] & [Partner 2]</h2>
+    </div>
+
+    <div class="calendar-block">
+        <div class="date-box">
+            <div class="day-label">Month</div>
+            <div class="day-number">10</div>
+        </div>
+        <div class="date-box">
+            <div class="day-label">Day</div>
+            <div class="day-number">25</div>
+        </div>
+        <div class="date-box">
+            <div class="day-label">Year</div>
+            <div class="day-number">2026</div>
+        </div>
+        <div class="date-text">
+            <p><strong>Status: Confirmed</strong></p>
+            <p>Location: [Venue Name], [City]</p>
+        </div>
+    </div>
+
+    <form action="#" method="POST">
+        <div class="form-group">
+            <label for="name">Lead Contact Name (As Addressed)</label>
+            <input type="text" id="name" name="name" placeholder="E.g., Mr. John Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address for Confirmation</label>
+            <input type="email" id="email" name="email" placeholder="john.doe@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label>Attendance Status for [Partner 1] & [Partner 2]'s Wedding</label>
+            <div class="attendance-options">
+                <input type="radio" id="attend_yes" name="attendance" value="Yes" required>
+                <label for="attend_yes">Accept with Pleasure (YES)</label>
+
+                <input type="radio" id="attend_no" name="attendance" value="No">
+                <label for="attend_no">Decline with Regret (NO)</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="guests">Total Attending (Including Yourself)</label>
+            <input type="number" id="guests" name="guests" min="1" max="6" placeholder="1" required>
+            <small style="color:#777;">*Maximum party size is [X]. Please contact us for exceptions.</small>
+        </div>
+
+        <div class="form-group">
+            <label for="dietary">Dietary/Allergy Requirements (Optional)</label>
+            <input type="text" id="dietary" name="dietary" placeholder="E.g., Vegetarian, Gluten-Free, Nut Allergy">
+        </div>
+
+        <div class="form-group">
+            <label for="message">Notes/Message for the Couple (Optional)</label>
+            <textarea id="message" name="message" rows="3" placeholder="Congratulations on the merger! Looking forward to celebrating."></textarea>
+        </div>
+
+        <button type="submit" class="submit-button">Submit RSVP Confirmation</button>
+    </form>
+
+    <div class="footer">
+        <p><strong>CONFIDENTIAL:</strong> Please submit your response by **[RSVP Date]** to ensure accurate resource allocation.</p>
+        <p>For technical support, please contact the Event Coordinator via email.</p>
+    </div>
+</div>
+</body>
+</html>

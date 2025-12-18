@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story - RSVP Flipbook</title>
+
+    <style>
+        /* -------------------------------------- */
+        /* 1. Global and Container Styling */
+        /* -------------------------------------- */
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f0e5; /* Light cream/parchment background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .flipbook-container {
+            perspective: 1500px;
+            max-width: 600px; /* Limits the size on large screens */
+            width: 90%; /* Responsive width for mobile */
+            height: 800px;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 10px 10px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        /* -------------------------------------- */
+        /* 2. Page Styling and Flip Effect */
+        /* -------------------------------------- */
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            padding: 40px;
+            backface-visibility: hidden;
+            transition: transform 1s;
+            transform-origin: left center;
+            overflow-y: auto;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-content {
+            text-align: center;
+        }
+
+        .hidden {
+            z-index: -1;
+            pointer-events: none;
+            transform: rotateY(0deg);
+        }
+
+        /* -------------------------------------- */
+        /* 3. Content Styling */
+        /* -------------------------------------- */
+
+        /* Cover Page */
+        .cover-page h1 { color: #a52a2a; font-size: 3.5em; margin-top: 150px; font-weight: bold; }
+        .cover-page h2 { color: #8b4513; font-size: 1.8em; margin-bottom: 50px; }
+
+        /* Story Pages */
+        .story-page .chapter-number { color: #8b4513; font-style: italic; display: block; margin-bottom: 10px; font-size: 1.2em; }
+        .story-page h3 { color: #a52a2a; margin-bottom: 20px; }
+        .story-page p { margin-bottom: 30px; line-height: 1.6; }
+        .story-page img { max-width: 80%; height: auto; margin: 15px 0; border: 3px solid #eee; box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); }
+
+        /* Details Page */
+        .details-page h2 { color: #a52a2a; margin-bottom: 40px; }
+        .details-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px dashed #ccc;
+            background-color: #fffaf5;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .details-section h3 { color: #8b4513; margin-top: 0; }
+        .details-section p { margin: 5px 0; }
+        .detail-time { font-weight: bold; color: #333; }
+
+        /* RSVP Form Styling */
+        .rsvp-page h2 { margin-bottom: 30px; color: #a52a2a; }
+        .rsvp-page label, .rsvp-page input, .rsvp-page select, .rsvp-page textarea {
+            display: block;
+            width: 90%;
+            max-width: 400px;
+            margin: 10px auto;
+            text-align: left;
+        }
+        .rsvp-page label {
+            font-weight: bold;
+            margin-top: 15px;
+            color: #444;
+        }
+        .rsvp-page input, .rsvp-page select, .rsvp-page textarea {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #8b4513;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            cursor: pointer;
+            margin-top: 30px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #a52a2a;
+        }
+
+        /* -------------------------------------- */
+        /* 4. Confirmation Message Styling */
+        /* -------------------------------------- */
+        #confirmation-message {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f8f0e5; /* Matches body background */
+            z-index: 100;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+        #confirmation-message h2 {
+            color: #a52a2a;
+            font-size: 3em;
+            margin-top: 100px;
+        }
+        #confirmation-message p {
+            max-width: 600px;
+            margin: 20px auto;
+            line-height: 1.8;
+            color: #333;
+        }
+
+
+        /* -------------------------------------- */
+        /* 5. Mobile Responsiveness */
+        /* -------------------------------------- */
+        @media (max-width: 700px) {
+            .flipbook-container {
+                /* On small screens, the book becomes taller and less wide to fit phone orientation */
+                width: 95%;
+                height: 85vh;
+            }
+            .page {
+                padding: 20px;
+                /* Adjust font sizes for mobile readability */
+            }
+            .cover-page h1 {
+                font-size: 2.5em;
+                margin-top: 100px;
+            }
+            .cover-page h2 {
+                font-size: 1.4em;
+            }
+            .story-page img {
+                max-width: 100%;
+            }
+            .page-content p {
+                font-size: 0.95em;
+            }
+            .rsvp-page label, .rsvp-page input, .rsvp-page select, .rsvp-page textarea {
+                width: 100%;
+            }
+            #confirmation-message h2 {
+                font-size: 2.5em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="flipbook-container">
+    <div id="book" class="book">
+
+        <div id="page1" class="page">
+            <div class="page-content cover-page">
+                <h1>The Beginning of Forever</h1>
+                <h2>[Bride's Name] & [Groom's Name]</h2>
+                <p>Invite you to turn the page and read the chapters of our story...</p>
+                <button onclick="nextPage()">Start Our Chapter</button>
+            </div>
+        </div>
+
+        <div id="page2" class="page hidden">
+            <div class="page-content story-page">
+                <span class="chapter-number">Chapter I</span>
+                <h3>The Day Our Paths Crossed</h3>
+                <p>It was a **[Month]** evening in **[City/Place]**. We both thought we were just grabbing coffee/attending the same event, but fate had other plans that led to our first date...</p>
+                <img src="https://via.placeholder.com/400x250?text=How+We+Met+Photo" alt="Photo of where we met">
+                <p>We knew instantly this was different. Our story truly began here.</p>
+                <button onclick="nextPage()">Next Chapter</button>
+            </div>
+        </div>
+
+        <div id="page3" class="page hidden">
+            <div class="page-content story-page">
+                <span class="chapter-number">Chapter II</span>
+                <h3>Adventures & Milestones</h3>
+                <p>From hiking **[Mountain Name]** to our chaotic cooking adventures, every shared moment, every laugh, and every challenge built the foundation of our love. Our favorite memory is...</p>
+                <img src="https://via.placeholder.com/400x250?text=Favorite+Memory+Photo" alt="Favorite Memory Photo">
+                <p>Two hearts, one amazing journey together.</p>
+                <button onclick="nextPage()">Next Chapter</button>
+            </div>
+        </div>
+
+        <div id="page4" class="page hidden">
+            <div class="page-content story-page">
+                <span class="chapter-number">Chapter III</span>
+                <h3>The Question</h3>
+                <p>On **[Date of Proposal]**, at **[Location]**, under the light of a thousand stars/city lights, we decided to make our adventure official. It was the easiest 'Yes' ever!</p>
+                <img src="https://via.placeholder.com/400x250?text=Proposal+Photo" alt="Proposal Photo">
+                <p>Now, we are ready for our biggest chapter yet: **Marriage**.</p>
+                <button onclick="nextPage()">The Grand Finale</button>
+            </div>
+        </div>
+
+        <div id="page5" class="page hidden">
+            <div class="page-content details-page">
+                <span class="chapter-number">The Grand Finale</span>
+                <h2>The Ceremony & Celebration Details</h2>
+
+                <div class="details-section">
+                    <h3>🕊️ The Ceremony</h3>
+                    <p class="detail-time">**[Time]** on **[Day, Month Date, Year]**</p>
+                    <p class="detail-location">**[Ceremony Venue Name]**<br>[Ceremony Venue Address, City]</p>
+                    <p class="detail-note">Please arrive 15 minutes early.</p>
+                </div>
+
+                <div class="details-section">
+                    <h3>🥂 The Reception</h3>
+                    <p class="detail-time">**[Time]** onwards</p>
+                    <p class="detail-location">**[Reception Venue Name]**<br>[Reception Venue Address, City]</p>
+                    <p class="detail-note">Dress Code: **[Formal/Semi-Formal/Cocktail]**</p>
+                </div>
+
+                <button onclick="nextPage()">Your RSVP</button>
+            </div>
+        </div>
+
+        <div id="page6" class="page hidden">
+            <div class="page-content rsvp-page">
+                <h2>Will You Be Joining Our Next Chapter?</h2>
+
+                <form id="rsvpForm">
+                    <label for="name">Your Name(s) as on Invitation:</label>
+                    <input type="text" id="name" name="guest_names" required placeholder="Mr. & Mrs. Smith">
+
+                    <label for="attendance">Will you be attending?</label>
+                    <select id="attendance" name="attendance" required>
+                        <option value="">-- Please Choose --</option>
+                        <option value="attending">Happily Attending!</option>
+                        <option value="declining">Regretfully Declining</option>
+                    </select>
+
+                    <label for="guests">Number in Party (including yourself):</label>
+                    <input type="number" id="guests" name="guest_count" min="1" max="6" value="1" required>
+
+                    <label for="meal">Dietary Restrictions/Notes (Optional):</label>
+                    <textarea id="meal" name="dietary_notes" placeholder="e.g., Gluten-free, Vegetarian, severe nut allergy..."></textarea>
+
+                    <button type="submit">Send RSVP to the Happy Couple</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="confirmation-message">
+    <h2>🎉 RSVP Confirmed!</h2>
+    <p>Thank you for letting us know! We are so excited to celebrate with you as we begin our next chapter. You can now close this page.</p>
+    <p class="detail-time">**We can't wait to see you on [Wedding Date]!**</p>
+    <p>If your plans change, please notify us directly at [Email Address or Phone Number].</p>
+</div>
+
+
+<script>
+    // --------------------------------------
+    // 4. JavaScript Flip Logic
+    // --------------------------------------
+    let currentPage = 1;
+    const totalPages = 6;
+    const bookElement = document.getElementById('book');
+    const confirmationMessage = document.getElementById('confirmation-message');
+
+    function nextPage() {
+        if (currentPage < totalPages) {
+            const prevPage = document.getElementById('page' + currentPage);
+
+            // 1. Flip the current page backwards (rotate -180 degrees)
+            prevPage.style.transform = 'rotateY(-180deg)';
+            prevPage.style.zIndex = totalPages - currentPage;
+
+            // 2. Increment and prepare the next page
+            currentPage++;
+            const nextPageElement = document.getElementById('page' + currentPage);
+
+            // 3. Bring the new page forward and ensure it's flat (visible)
+            nextPageElement.classList.remove('hidden');
+            nextPageElement.style.transform = 'rotateY(0deg)';
+            nextPageElement.style.zIndex = totalPages;
+
+            // 4. Ensure the previous page is not clickable after flip
+            prevPage.style.pointerEvents = 'none';
+        }
+    }
+
+    // Initial setup: Ensures only Page 1 is visible and Z-indexed correctly at load
+    document.addEventListener('DOMContentLoaded', () => {
+        for (let i = 2; i <= totalPages; i++) {
+            const page = document.getElementById('page' + i);
+            page.classList.add('hidden');
+            page.style.transform = 'rotateY(0deg)';
+        }
+        document.getElementById('page1').style.zIndex = totalPages;
+    });
+
+    // --------------------------------------
+    // 5. Form Submission and Confirmation
+    // --------------------------------------
+    document.getElementById('rsvpForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // In a real application, you would collect the data like this:
+        // const formData = new FormData(this);
+        // Example: const name = formData.get('guest_names');
+
+        // --- Placeholder for Actual Data Submission ---
+        // Use fetch() or XMLHttpRequest here to send data to a backend (e.g., Google Form, custom API).
+        // Example: fetch('YOUR_BACKEND_ENDPOINT', { method: 'POST', body: formData });
+        // --- End Placeholder ---
+
+        // Simulate a short delay for sending the data
+        setTimeout(() => {
+            // 1. Hide the flipbook container
+            bookElement.style.display = 'none';
+            // 2. Display the confirmation message
+            confirmationMessage.style.display = 'flex';
+            confirmationMessage.style.flexDirection = 'column';
+
+            // Optional: You could show a personalized message
+            // const guestName = document.getElementById('name').value.split(',')[0] || 'Guest';
+            // confirmationMessage.querySelector('p').innerHTML = `Thank you, ${guestName}! ...`;
+
+        }, 500); // Wait 0.5 seconds for visual effect
+    });
+</script>
+</body>
+</html>

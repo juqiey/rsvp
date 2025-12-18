@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jemputan Kahwin - Tiket Penerbangan</title>
+    <style>
+        /* --- General Body and Page Setup --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- Main Ticket Container (Very Wide) --- */
+        .boarding-pass-container {
+            width: 100%;
+            max-width: 1100px; /* Increased maximum width for the horizontal feel */
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: flex; /* Main flex container for the ticket */
+        }
+
+        /* --- The Main Left Section (Details + RSVP Form) --- */
+        .left-section {
+            flex: 4; /* Takes up most of the horizontal space */
+            display: flex;
+            flex-direction: column;
+            border-right: 2px dashed #e74c3c; /* Red tear line (Malaysian flag color) */
+        }
+
+        /* --- Right Side: Stub/Tear-off Section (Vertical) --- */
+        .stub {
+            flex: 1;
+            max-width: 200px; /* Constrain stub width */
+            padding: 30px 15px;
+            background-color: #ecf0f1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        /* --- Flight Details Section (Top of the ticket) --- */
+        .flight-details {
+            padding: 30px;
+            border-bottom: 1px solid #ddd; /* Separates flight info from the form */
+        }
+
+        /* --- Logo/Header Styling --- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #f1c40f; /* Yellow stripe (Malaysian flag color) */
+            padding-bottom: 10px;
+        }
+
+        .airline-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2980b9; /* Blue (Malaysian flag color) */
+        }
+
+        .title {
+            font-size: 16px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* --- Data Field Grid (6 columns for authentic look) --- */
+        .data-fields {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px 15px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        /* --- Individual Data Block --- */
+        .field {
+            line-height: 1.4;
+        }
+
+        .field-label {
+            font-size: 10px;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .field-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        /* Specific data field overrides for layout */
+        .field.passenger-name { grid-column: span 2; }
+        .field.destination-abbr { grid-column: span 1; }
+        .field.time-block { grid-column: span 1; }
+        .field.gate-seat { grid-column: span 2; }
+
+        /* --- RSVP Form Section (Now at the bottom of the main ticket) --- */
+        .rsvp-form {
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 0 0 0 12px;
+        }
+
+        .rsvp-form h3 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #2980b9;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-group.full-width {
+            flex: 0 0 100%; /* forces full width for the quote/diet fields */
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .radio-group label {
+            margin-right: 15px;
+            font-weight: normal;
+        }
+
+        .submit-btn {
+            background-color: #f1c40f;
+            color: #333;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #d35400;
+            color: white;
+        }
+
+        /* --- Stub Styling --- */
+        .stub .field-value {
+            font-size: 22px;
+            color: #e74c3c;
+        }
+
+        .stub .field-label {
+            margin-top: 15px;
+        }
+
+        .confirmation-text {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 850px) {
+            .boarding-pass-container {
+                flex-direction: column;
+                max-width: 600px;
+            }
+            .left-section {
+                border-right: none;
+                border-bottom: 2px dashed #e74c3c;
+            }
+            .stub {
+                max-width: 100%;
+            }
+            .data-fields {
+                grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns on mobile */
+            }
+            /* Reset specific grid spans for mobile */
+            .field.passenger-name, .field.gate-seat { grid-column: span 2; }
+            .field.destination-abbr, .field.time-block { grid-column: span 1; }
+
+            .form-row {
+                flex-direction: column; /* Stack form fields vertically on mobile */
+            }
+            .form-group.full-width {
+                flex: 1;
+            }
+            .rsvp-form {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="boarding-pass-container">
+
+    <div class="left-section">
+
+        <div class="flight-details">
+            <div class="header">
+                <div class="airline-logo">MAH-LIGAI AIRLINES 🇲🇾</div>
+                <div class="title">TIKET JEMPUTAN PERKAHWINAN</div>
+            </div>
+
+            <div class="data-fields">
+
+                <div class="field passenger-name">
+                    <span class="field-label">Nama Penumpang (Passenger Name)</span>
+                    <span class="field-value">TETAMU HORMAT (ESTEEMED GUEST)</span>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Nombor Penerbangan (Flight No.)</span>
+                    <span class="field-value">W-2026/MY</span>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Dari (From)</span>
+                    <span class="field-value">BJV - BUJANG VILLE</span>
+                </div>
+
+                <div class="field destination-abbr">
+                    <span class="field-label">Ke (To)</span>
+                    <span class="field-value">RTB - RUMAH TANGGA BAHAGIA</span>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Tema (Theme)</span>
+                    <span class="field-value">MAJESTIC MELAYU | ROYAL BLUE</span>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Tarikh (Date)</span>
+                    <span class="field-value">15 MEI 2026</span>
+                </div>
+
+                <div class="field time-block">
+                    <span class="field-label">Waktu Akad Nikah (Ceremony Time)</span>
+                    <span class="field-value">4:00 PETANG</span>
+                </div>
+
+                <div class="field gate-seat">
+                    <span class="field-label">Lokasi Akad Nikah (Ceremony Location)</span>
+                    <span class="field-value">DEWAN SERI KEMBANGAN, KUALA LUMPUR</span>
+                </div>
+
+                <div class="field time-block">
+                    <span class="field-label">Waktu Jamuan (Reception Time)</span>
+                    <span class="field-value">6:00 MALAM</span>
+                </div>
+
+                <div class="field">
+                    <span class="field-label">Pintu (Gate) / Tempat Duduk (Seat)</span>
+                    <span class="field-value">PELAMIN / MEJA MAKAN</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rsvp-form">
+            <h3>Sahkan Rancangan Perjalanan Anda (Confirm Your Travel Plans)</h3>
+            <form action="YOUR_RSVP_PROCESSING_URL" method="POST">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nama Penuh Anda (Your Full Name(s)):</label>
+                        <input type="text" id="name" name="name" required placeholder="Cth: Ahmad dan Fatimah">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guests">Bilangan Tetamu Hadir (Including Yourself):</label>
+                        <select id="guests" name="guests" required>
+                            <option value="">Sila Pilih</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Adakah anda akan hadir ke majlis kami?</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="attendance" value="Attending" required> **HADIR** (Dengan Sukacitanya)</label>
+                            <label><input type="radio" name="attendance" value="Declining"> **TOLAK** (Maaf Tidak Dapat Hadir)</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="diet">Pantang Larang Makanan / Nota (Pilihan):</label>
+                        <input type="text" id="diet" name="diet" placeholder="Cth: Vegetarian, alahan kacang, dsb.">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="guestbook_quote">**Mesej Buku Tetamu (Guestbook Quote):** Sila berikan ucapan, nasihat, atau kata-kata hikmah untuk pengantin baru!</label>
+                        <textarea id="guestbook_quote" name="guestbook_quote" rows="3" placeholder="Contoh: Semoga kekal bahagia hingga ke Jannah. Selamat Pengantin Baru!"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">SAHKAN TEMPAHAN & DAFTAR MASUK</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="stub">
+        <div class="stub-info">
+            <span class="field-label">Penerbangan</span>
+            <span class="field-value">W-2026</span>
+
+            <span class="field-label">Tarikh</span>
+            <span class="field-value">15 MEI</span>
+
+            <span class="field-label">Waktu</span>
+            <span class="field-value">6 PM</span>
+
+            <span class="field-label">Destinasi</span>
+            <span class="field-value">RTB</span>
+        </div>
+
+        <div class="stub-name">
+            <span class="field-label">Penumpang</span>
+            <span class="field-value small-text">AHMAD/FATIMAH</span>
+        </div>
+
+        <div class="confirmation-text">
+            R.S.V.P. SEBELUM 15 APRIL, 2026
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

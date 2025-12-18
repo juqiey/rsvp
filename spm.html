@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KENYATAAN KEPUTUSAN CALON (SPM: Sijil Perkahwinan Malaysia)</title>
+    <style>
+        /* --- General Styling --- */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eef1f5; /* Light background */
+            color: #000;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            max-width: 750px;
+            width: 100%;
+            border: 2px solid #000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Header/Official Info --- */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header img {
+            height: 60px; /* For a crest/logo placeholder */
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 1.4em;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .header h2 {
+            font-size: 1.1em;
+            margin: 5px 0 0 0;
+            font-weight: normal;
+        }
+
+        .info-strip {
+            display: flex;
+            justify-content: space-between;
+            background-color: #ddd;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            border: 1px solid #000;
+            margin-bottom: 20px;
+        }
+
+        /* --- Table Structure (Result Details) --- */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+
+        .results-table th, .results-table td {
+            border: 1px solid #000;
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .results-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .results-table .subject-code {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .results-table .gred {
+            text-align: center;
+            font-weight: bold;
+            background-color: #e6ffec; /* Light green for accepted status */
+        }
+
+        .results-table .gred.decline {
+            background-color: #ffe6e6; /* Light red for declined status */
+        }
+
+        /* --- Form Elements within the Table --- */
+        .form-input-container {
+            width: 100%;
+            border: none;
+            padding: 0;
+        }
+
+        .form-input-container input[type="text"],
+        .form-input-container input[type="number"],
+        .form-input-container select {
+            width: 95%;
+            border: 1px solid #ccc;
+            padding: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .radio-options input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .radio-options label {
+            margin-right: 15px;
+            font-weight: normal;
+            display: inline-block;
+        }
+
+        /* --- Overall Result Footer --- */
+        .overall-result {
+            border: 2px solid #000;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            background-color: #f9f9f9;
+        }
+        .overall-result strong {
+            font-size: 1.2em;
+            color: #008000; /* Green for success */
+        }
+
+        /* --- Signature/Submit Block --- */
+        .signature-block {
+            padding-top: 15px;
+            border-top: 1px solid #000;
+            text-align: right;
+        }
+
+        .submit-button {
+            background-color: #000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjREREREREIi8+PHRleHQgeD0iNTAiIHk9IjYwIiBmb250LXNpemU9IjMwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzMzMzMzIj5SRVNVMzwvdGV4dD48L3N2Zz4=" alt="KPM Logo Placeholder">
+        <h1>KEMENTERIAN PERKAHWINAN MALAYSIA (KPM)</h1>
+        <h2>KENYATAAN KEPUTUSAN CALON</h2>
+    </div>
+
+    <div class="info-strip">
+        <span>**TAHUN PEPERIKSAAN:** 2026</span>
+        <span>**TARIKH UNION:** 25 OKTOBER 2026</span>
+        <span>**PUSAT PERKAHWINAN:** [VENUE CITY]</span>
+    </div>
+
+    <form action="#" method="POST">
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th colspan="2">NOMBOR PENDAFTARAN CALON (ID)</th>
+                <th>NAMA CALON (TULIS DENGAN HURUF BESAR)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td colspan="2" class="subject-code">[RSVP CODE/INVITE ID]</td>
+                <td class="form-input-container">
+                    <input type="text" id="name" name="name" placeholder="NAMA PENUH SEPERTI DALAM KAD PENGENALAN" required>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="3">ALAMAT E-MEL UTAMA (Untuk Penghantaran Sijil Digital)</th>
+            </tr>
+            <tr>
+                <td colspan="3" class="form-input-container">
+                    <input type="email" id="email" name="email" placeholder="EMAIL@DOMAIN.COM" required>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="results-table">
+            <thead>
+            <tr>
+                <th style="width: 10%;">KOD</th>
+                <th style="width: 50%;">MATA PELAJARAN (PERKARA DIKEMUKAKAN)</th>
+                <th style="width: 25%;">GRED PENCAPAIAN</th>
+                <th style="width: 15%;">CATATAN</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="subject-code">3301</td>
+                <td>**KEHADIRAN MAJLIS AKAD NIKAH/UNION**</td>
+                <td class="gred">
+                    <div class="radio-options">
+                        <label><input type="radio" name="akad_nikah" value="A+" required> LULUS (A+)</label>
+                        <label><input type="radio" name="akad_nikah" value="C"> GAGAL (C)</label>
+                    </div>
+                </td>
+                <td>WAJIB</td>
+            </tr>
+            <tr>
+                <td class="subject-code">3302</td>
+                <td>**KEHADIRAN MAJLIS SAMBUTAN / RESEPSI**</td>
+                <td class="gred">
+                    <div class="radio-options">
+                        <label><input type="radio" name="resepsi" value="A"> LULUS (A)</label>
+                        <label><input type="radio" name="resepsi" value="F" class="decline"> GAGAL (F)</label>
+                    </div>
+                </td>
+                <td>PILIHAN</td>
+            </tr>
+            <tr>
+                <td class="subject-code">3303</td>
+                <td>**BILANGAN TETAMU / NOMBOR PENEMAN**</td>
+                <td class="form-input-container">
+                    <input type="number" id="guests" name="guests" min="1" max="6" placeholder="JUMLAH" required>
+                </td>
+                <td>Max: 6</td>
+            </tr>
+            <tr>
+                <td class="subject-code">3304</td>
+                <td>**KEPERLUAN DIET / ALAHAN (ALERGIES)**</td>
+                <td colspan="2" class="form-input-container">
+                    <input type="text" id="dietary" name="dietary" placeholder="TULIS DIET KHAS ATAU TIADA">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="overall-result">
+            <p><strong>KEPUTUSAN KESELURUHAN</strong></p>
+            <p>Sila pastikan semua bahagian diisi bagi mengelakkan keputusan **TIDAK LENGKAP**.</p>
+            <p>Tarikh Akhir Serahan: **[TARIKH TUTUP RSVP]**</p>
+        </div>
+
+        <div class="signature-block">
+            <p style="margin: 0 0 5px 0; font-size: 0.8em;">(Tandatangan Calon dan Cop Jari Ibu Bapa tidak diperlukan, hanya klik)</p>
+            <button type="submit" class="submit-button">MENGESAHKAN KEPUTUSAN CALON (SUBMIT RSVP)</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Encounter Form: Wedding RSVP</title>
+    <style>
+        /* --- General Styling --- */
+        body {
+            font-family: 'Courier New', monospace; /* Classic form/medical font */
+            background-color: #eee;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            border: 2px solid #333; /* Strong border for a clipped form look */
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Header/Clinic Info --- */
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header .clinic-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header .form-id {
+            font-size: 0.9em;
+            color: #777;
+        }
+
+        /* --- Patient Info (Guest Details) --- */
+        .section-title {
+            background-color: #f0f0f0;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-left: 5px solid #cc0000; /* Medical Red accent */
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .info-field {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .info-field label {
+            display: block;
+            font-size: 0.8em;
+            color: #777;
+            margin-bottom: 3px;
+            border-bottom: 1px dashed #999;
+        }
+
+        .info-field input,
+        .info-field select {
+            border: none;
+            border-bottom: 1px solid #333; /* Underline input style */
+            padding: 5px 0;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+        }
+
+        /* --- Diagnosis/Procedure (RSVP Status) --- */
+        .diagnosis-section {
+            border: 1px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .diagnosis-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.9em;
+        }
+
+        .diagnosis-options label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .diagnosis-options input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2); /* Make checkbox/radio stand out */
+        }
+
+        .procedure-row {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #999;
+        }
+
+        /* --- Prescription (Meal/Dietary) --- */
+        .prescription-section {
+            border: 1px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid #333;
+            padding: 8px;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            height: 80px;
+            resize: vertical;
+        }
+
+        /* --- Footer/Signature Block --- */
+        .footer-block {
+            padding-top: 10px;
+            border-top: 2px solid #333;
+            text-align: right;
+        }
+
+        .submit-button {
+            background-color: #cc0000; /* Red "Urgent" button */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="clinic-name">The Union of [Partner 1] & [Partner 2]</div>
+        <div class="form-id">Encounter Form ID: 2026-RSVP-0901</div>
+    </div>
+
+    <form action="#" method="POST">
+
+        <div class="section-title">Patient/Party Information</div>
+        <div class="info-row">
+            <div class="info-field">
+                <label>Last Name, First Name (Lead Patient)</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="info-field" style="flex: 0.4;">
+                <label>Guest Count (QTY)</label>
+                <input type="number" id="guests" name="guests" min="1" max="6" value="1" required>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div class="info-field">
+                <label>Contact Phone/Email (Pharmacy Contact)</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="info-field" style="flex: 0.6;">
+                <label>Referral Physician (Where Did You Hear About Us?)</label>
+                <input type="text" id="referral" name="referral" value="Wedding Invitation Card">
+            </div>
+        </div>
+
+
+        <div class="section-title">Procedure & Scheduling (RSVP Confirmation)</div>
+        <div class="diagnosis-section">
+            <label style="font-size: 1em; color: #333; border: none; margin-bottom: 10px;">Encounter Date: October 25, 2026</label>
+
+            <div class="diagnosis-options">
+                <label>
+                    <input type="radio" name="attendance" value="Attend_Yes" required>
+                    CPT Code 99203: ACCEPT APPOINTMENT (In Person)
+                </label>
+                <label>
+                    <input type="radio" name="attendance" value="Decline_No">
+                    CPT Code 99214: DECLINE APPOINTMENT (Via Telehealth/Regret)
+                </label>
+                <label>
+                    <input type="radio" name="attendance" value="Partial_Maybe">
+                    CPT Code 99201: PARTIAL ATTENDANCE (Ceremony Only)
+                </label>
+            </div>
+
+            <div class="procedure-row">
+                <label style="font-size: 0.8em; color: #777; border: none;">Special Instructions for Scheduling (Song Request/Note):</label>
+                <input type="text" id="song" name="song" placeholder="E.g., Please treat as VIP status. Play 'Love Potion No. 9'.">
+            </div>
+        </div>
+
+        <div class="section-title">Prescription & Allergies (Meal/Dietary Notes)</div>
+        <div class="prescription-section">
+            <label style="font-size: 1em; color: #333; border: none; margin-bottom: 5px;">Allergies/Dietary Restrictions - ICD-10 Code/Notes Required:</label>
+            <textarea id="dietary" name="dietary" placeholder="E.g., ICD-10 Z91.011 (Allergy to peanuts/nuts), Vegetarian, Gluten-free."></textarea>
+        </div>
+
+        <div class="footer-block">
+            <p style="font-size: 0.8em; color: #777; margin: 5px 0;">***All information is highly confidential and for event planning purposes only. Response due: [RSVP Date]***</p>
+            <button type="submit" class="submit-button">File Patient Encounter (RSVP)</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

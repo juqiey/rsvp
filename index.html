@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IEEE Wedding RSVP Paper with Countdown and Popups</title>
+    <style>
+        /* =================== GENERAL SETUP & COUNTERS =================== */
+        body {
+            background:#e5e5e5;
+            margin:0;
+            padding:20px 0;
+            font-family:"Times New Roman", Times, serif;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            position: relative;
+        }
+
+        /* Set up counter for Roman numerals for sections */
+        .paper {
+            counter-reset: section;
+        }
+
+        /* =================== A4 PAPER CONTAINER =================== */
+        .paper {
+            width:21cm;
+            min-height:29.7cm;
+            background:#fff;
+            padding:2.54cm;
+            box-sizing:border-box;
+            box-shadow:0 0 10px rgba(0,0,0,0.15);
+            font-size:10pt; /* Standard IEEE body text size for conference papers */
+            line-height:1.2;
+            color:#000;
+            display:grid;
+            /* A common IEEE column width setup */
+            grid-template-columns:calc(50% - 0.4cm) calc(50% - 0.4cm);
+            column-gap:0.8cm;
+            overflow:hidden;
+            margin:0.5cm 0;
+            page-break-after: always;
+        }
+
+        /* Styles for the Countdown Button */
+        #countdownButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* =================== COUNTDOWN PAGE STYLES =================== */
+        #countdownPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f0e68c, #fffacd); /* Soft gold/cream background */
+            color: #4b0082; /* Deep purple text */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #countdownPage.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .countdown-title {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 20px;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #b8860b; /* Dark gold border */
+            padding: 20px 30px;
+            border-radius: 10px;
+            min-width: 120px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-box span {
+            display: block;
+        }
+
+        .time-number {
+            font-size: 4em;
+            font-weight: bold;
+            line-height: 1;
+            color: #8b4513; /* Brown/Dark Gold */
+        }
+
+        .time-label {
+            font-size: 1.2em;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        #backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: #8b4513; /* Brown */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14pt;
+        }
+        /* END COUNTDOWN PAGE STYLES */
+
+        /* =================== MODAL POPUP STYLES =================== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6); /* Black background with opacity */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            max-width: 400px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-content h2 {
+            color: #4CAF50;
+            margin-top: 0;
+            font-size: 1.8em;
+        }
+
+        #rsvpStatus {
+            font-weight: bold;
+            color: #00008b; /* Dark blue for emphasis */
+            margin: 10px 0;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* HEADER SPANNING BOTH COLUMNS */
+        .paper-header {
+            grid-column:1 / -1;
+            text-align:center;
+            margin-bottom:12pt;
+        }
+
+        .title {
+            font-size:24pt;
+            font-weight:bold;
+            margin-bottom:18pt;
+            line-height:1.1;
+        }
+
+        /* AUTHORS SIDE BY SIDE */
+        .authors-container {
+            display:flex;
+            justify-content:center;
+            gap:1.5cm;
+            margin-top: 10pt;
+            margin-bottom:12pt;
+            font-size:10pt;
+        }
+
+        .author {
+            width:200px;
+            text-align:center;
+            font-size:10pt;
+            line-height:1.2;
+        }
+
+        /* ABSTRACT & KEYWORDS STYLING */
+        .abstract-box {
+            margin-bottom:10pt;
+            font-size:9pt; /* Smaller font for abstract */
+            line-height:1.3;
+            text-align:justify;
+        }
+        .abstract-heading {
+            font-weight:bold;
+            font-style:italic;
+            margin-right:0.5em;
+        }
+        .keywords {
+            font-size:9pt;
+            line-height:1.3;
+            text-align:justify;
+        }
+
+        /* SECTION TITLES */
+        .section-title {
+            font-weight:bold;
+            margin-top:14pt;
+            margin-bottom:6pt;
+            font-size:10pt;
+            text-transform:uppercase;
+        }
+        /* Automated Roman Numeral Numbering */
+        .section-title::before {
+            counter-increment: section;
+            content: counter(section, upper-roman) ". ";
+        }
+        /* Subsection titles - A., B., C. */
+        .subsection-title {
+            font-weight:bold;
+            margin-top:10pt;
+            margin-bottom:4pt;
+            font-size:10pt;
+        }
+
+        /* APPENDIX TITLE - Distinct numbering */
+        .appendix-title {
+            font-weight: bold;
+            margin-top: 14pt;
+            margin-bottom: 6pt;
+            font-size: 10pt;
+        }
+        /* The title for Appendix A */
+        .appendix-title::before {
+            content: "APPENDIX A: ";
+        }
+
+        /* CONTAINER TO FORCE SINGLE COLUMN FLOW IN APPENDIX */
+        .appendix-content {
+            grid-column: 1 / -1; /* Spans both columns */
+        }
+
+        p {
+            margin:0 0 6pt 0;
+            text-align:justify;
+            line-height:1.2;
+        }
+
+        /* FIRST PARAGRAPH OF SECTION - NO INDENT */
+        .section-title + p {
+            text-indent: 0;
+        }
+
+        /* FORMS - HIGHLIGHTED INPUT SECTIONS */
+        .form-container {
+            padding: 8pt;
+            margin-bottom: 12pt;
+            background: #ffffe0; /* Highlight color for input area */
+            border: 1px solid #ccc;
+        }
+
+        form {
+            font-size:9pt; /* Slightly smaller for forms within the column */
+            margin-bottom:0;
+            line-height:1.2;
+        }
+        label { display:block; margin-top:4pt; }
+        input[type="text"], input[type="email"], textarea {
+            width:100%;
+            font-family:"Times New Roman", Times, serif;
+            font-size:9pt;
+            padding:3px;
+            box-sizing:border-box;
+            border:1px solid #000;
+        }
+        textarea { resize:none; }
+        .radio-group { margin-top:4pt; }
+        input[type="submit"] {
+            margin-top:8pt;
+            padding:4px 8px;
+            font-size:9pt;
+            cursor:pointer;
+            background:#fff;
+            border:1px solid #000;
+        }
+
+        /* LIST STYLING for details (bulleted, non-indented for technical specifications) */
+        .details-list {
+            margin: 6pt 0 6pt 15pt;
+            padding: 0;
+            list-style: square; /* Use square bullets for distinction */
+            font-size: 10pt;
+        }
+        .details-list li {
+            margin-bottom: 4pt;
+            text-align: justify;
+        }
+
+
+        /* TABLES */
+        table {
+            width:100%;
+            border-collapse:collapse;
+            margin-top:6pt;
+            margin-bottom:6pt;
+            font-size:9pt; /* Tables often use a smaller font */
+        }
+        table, th, td { border:1px solid #000; }
+        th, td { padding:4pt; text-align:center; }
+
+        /* DIAGRAM BOXES (Flowchart imitation) */
+        .diagram {
+            display:flex;
+            justify-content:space-around;
+            margin-top:10pt;
+            margin-bottom:10pt;
+        }
+        .box {
+            border:1px solid #000;
+            padding:8pt 5pt;
+            width:30%;
+            text-align:center;
+            font-size:9pt;
+        }
+
+        /* REFERENCES - The most distinct part of IEEE format */
+        .references {
+            list-style: none;
+            padding-left: 2em;
+            font-size: 9pt; /* Standard reference size */
+            line-height: 1.2;
+            margin-top:6pt;
+        }
+
+        .references li {
+            position: relative;
+            margin-bottom: 4pt;
+            text-align:justify;
+        }
+
+        /* Create the bracketed number for references */
+        .references li:before {
+            content: "[" counter(ref) "]";
+            counter-increment: ref;
+            position: absolute;
+            left: -2em;
+            font-weight: normal;
+        }
+    </style>
+</head>
+<body>
+
+<button id="countdownButton" onclick="toggleCountdown(true)">View Wedding Countdown</button>
+
+<div id="countdownPage">
+    <button id="backButton" onclick="toggleCountdown(false)">Back to Paper</button>
+    <div class="countdown-title">Countdown to the Union Ceremony</div>
+    <div class="countdown-timer">
+        <div class="time-box">
+            <span class="time-number" id="days">00</span>
+            <span class="time-label">Days</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="hours">00</span>
+            <span class="time-label">Hours</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="minutes">00</span>
+            <span class="time-label">Minutes</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="seconds">00</span>
+            <span class="time-label">Seconds</span>
+        </div>
+    </div>
+    <p style="margin-top: 30px; font-size: 1.2em; font-weight: bold;">
+        Scheduled for: <b>20 July 2025 at 12:00 PM (GMT+8)</b>
+    </p>
+</div>
+
+<div id="rsvpModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('rsvpModal')">&times;</span>
+        <h2>RSVP Confirmation Received</h2>
+        <p>Thank you for submitting your attendance status.</p>
+        <p>Your current status is:</p>
+        <p id="rsvpStatus"></p>
+        <p>The remaining slots have been updated accordingly.</p>
+    </div>
+</div>
+
+<div id="quoteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('quoteModal')">&times;</span>
+        <h2>Quote Submission Success</h2>
+        <p>Thank you for your submission!</p>
+        <p>The <b>qualitative textual submission</b> has been successfully recorded in the Appendix.</p>
+        <p style="margin-top: 15px; font-style: italic;">The couple sends their gratitude.</p>
+    </div>
+</div>
+
+<div class="paper" id="paperContainer">
+    <div class="paper-header">
+        <div class="title">A FORMAL STUDY ON THE UNION OF TWO INDIVIDUALS THROUGH MATRIMONY</div>
+        <div class="authors-container">
+            <div class="author">
+                <b>B. Bride Name</b><br>
+                Independent Researcher<br>
+                Life Partnership Studies<br>
+                Kuala Terengganu, Malaysia<br>
+                Email: bride@example.com
+            </div>
+            <div class="author">
+                <b>G. Groom Name</b><br>
+                Independent Researcher<br>
+                Life Partnership Studies<br>
+                Kuala Terengganu, Malaysia<br>
+                Email: groom@example.com
+            </div>
+        </div>
+
+        <div class="abstract-box">
+            <span class="abstract-heading">Abstract—</span> This paper documents a wedding event in <b>Kuala Terengganu, Malaysia</b>, presenting a web-based RSVP system and a companion guestbook to capture attendance status and personalized messages from attendees interactively. The system design is presented within the framework of a standard academic submission style.
+        </div>
+        <div class="keywords">
+            <span class="abstract-heading">Keywords—</span> wedding, <b>RSVP</b>, guestbook, interactive system, <b>IEEE style</b>
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">INTRODUCTION</div>
+        <p>Marriage represents a major milestone in human life, symbolizing <b>commitment</b> and shared purpose between two individuals. This paper documents a wedding ceremony scheduled for <b>20 July 2025</b> at <b>Dewan Seri Harmoni, Kuala Terengganu</b>. In addition to event documentation, a <b>web-based system</b> is employed for both Attendance Confirmation (RSVP) and a digital Guestbook. The adoption of an IEEE-style format serves to provide a structured, academic presentation of this social event, emphasizing the 'materials and methods' of guest management.</p>
+
+        <div class="section-title">RELATED WORK</div>
+        <p>The management of guest lists has traditionally relied heavily on physical paper invitations and manual tallying. <b>Modern digital approaches</b>, however, allow for efficient confirmation collection and <b>real-time interaction</b>. Studies by social science researchers often explore the sociology of large gatherings [1]. This work builds upon the shift from analogue to digital communication by providing two distinct, integrated web forms. The <b>RSVP form</b> is a critical data collection tool for event planning, while the <b>guestbook form</b> serves as a means for hosts to collect personalized messages and quotes from attendees, capturing qualitative, sentimental data.</p>
+    </div>
+
+    <div>
+        <div class="section-title">MATERIALS AND METHODS</div>
+        <p>The primary materials used are two distinct interactive web forms implemented in <b>HTML/CSS/JavaScript</b>, designed to collect <b>quantitative</b> (attendance status) and <b>qualitative</b> (guestbook message) data, respectively. Both forms are optimized for rapid input and submission.</p>
+
+        <div class="subsection-title">A. RSVP / Attendance Form</div>
+        <p>The attendance confirmation system captures the guest’s identifier (<b>Name</b>, <b>Email</b>) and a binary variable representing their ability to attend the ceremony. This is essential for final catering and seating arrangement planning.</p>
+        <div class="form-container">
+            <form id="attendanceForm">
+                <label>Guest Name:</label><input type="text" id="attendeeName" required>
+                <label>Email Address:</label><input type="email" id="attendeeEmail" required>
+                <label>Attendance Status:</label>
+                <div class="radio-group">
+                    <input type="radio" name="attend" value="Will Attend" required> Will Attend<br>
+                    <input type="radio" name="attend" value="Cannot Attend"> Cannot Attend
+                </div>
+                <input type="submit" value="Submit RSVP">
+            </form>
+        </div>
+
+        <div class="subsection-title">B. Guestbook Form (Quotes / Messages)</div>
+        <p>The guestbook acts as a data repository for <b>qualitative textual submissions</b>. Guests are prompted to submit a personalized message or quote for the newly married couple.</p>
+        <div class="form-container">
+            <form id="guestbookForm">
+                <label>Guest Name:</label><input type="text" id="guestbookName" required>
+                <label>Quote / Message:</label><textarea id="guestbookQuote" rows="3" required></textarea>
+                <input type="submit" value="Submit Quote">
+            </form>
+        </div>
+    </div>
+</div> <div class="paper">
+    <div>
+        <div class="subsection-title">C. Event Location and Timing</div>
+        <p>The matrimonial ceremony is defined by the following spatial and temporal parameters:</p>
+        <ul class="details-list">
+            <li><b>Date:</b> <b>Sunday, 20 July 2025</b>.</li>
+            <li><b>Reception Time:</b> <b>12:00 PM (GMT+8)</b> to <b>4:00 PM (GMT+8)</b>.</li>
+            <li><b>Location:</b> <b>Dewan Seri Harmoni</b>, <b>Kuala Terengganu, Malaysia</b>.  The venue was selected for its centralized accessibility and capacity, optimizing the travel time and logistical constraints for the invited population.</li>
+        </ul>
+
+        <div class="subsection-title">D. Attire and Theme Specifications</div>
+        <p>To ensure high quality visual data collection and a unified aesthetic, the following specifications for guest attire must be adhered to:</p>
+        <ul class="details-list">
+            <li><b>Dress Code:</b> <b>Formal or Traditional Wear</b>.</li>
+            <li><b>Theme:</b> <b>White and Gold</b> (Symbolizing Purity and Prosperity).</li>
+            <li><b>Note:</b> Adherence to this dress code serves as a control variable for the visual aesthetic dataset.</li>
+        </ul>
+
+        <div class="section-title">RESULTS AND DISCUSSIONS</div>
+        <p>The collected data, consisting of submitted RSVPs and guestbook entries, is presented through real-time visualizations and status updates. The attendance data facilitates <b>logistical preparation</b>, while the guestbook quotes capture personal sentiments, forming a valuable <b>qualitative dataset</b> for the couple.</p>
+
+        <div class="subsection-title">A. Remaining Attendance Slots</div>
+        <p>Based on the venue capacity ($N_{max}=1000$), the number of available slots remaining for the ceremony is dynamically displayed below, reflecting the current RSVP confirmations.</p>
+        <p style="text-align:center; font-size:14pt; font-weight:bold; margin: 12pt 0;" id="remainingSlotsDisplay">
+            Calculating...
+        </p>
+
+        <div class="subsection-title">B. Wedding Ceremony Flow</div>
+        <p>The high-level process flow of the wedding ceremony is shown below, following a standard event management model.  </p>
+        <div class="diagram">
+            <div class="box">Arrival of Guests</div>
+            <div class="box">Ceremony</div>
+            <div class="box">Reception</div>
+        </div>
+        <p style="text-align:center; font-size:9pt; margin-bottom:12pt;">Fig. 1. High-Level Process Flow of the Wedding Ceremony</p>
+    </div>
+
+    <div>
+        <div class="section-title">CONCLUSION</div>
+        <p>The <b>dual-form system</b> successfully implemented within an academic document framework allows for <b>structured attendance confirmation</b> and the capture of meaningful, unsolicited quotes from guests. The structured IEEE-style layout provides an organized and technically formal presentation of a significant social event, validating the utility of <b>web-based forms</b> in event management.</p>
+
+        <div class="section-title">ACKNOWLEDGEMENT</div>
+        <p>The authors thank <b>family, friends, and event organizers</b> for their invaluable support in preparing this memorable wedding ceremony and contributing to the initial dataset (pre-testing).</p>
+
+        <div class="section-title">REFERENCES</div>
+        <ol class="references" id="references">
+            <li value="1"><b>A. Smith</b> and <b>B. Jones</b>, "Sociological Impact of Large Ceremonial Events: A Case Study," <i>Journal of Social Dynamics</i>, vol. 42, no. 3, pp. 101-115, <b>March 2023</b>.</li>
+            <li value="2"><b>B. Bride Name</b>, Personal Communication, Phone: <b>+60-12-3456789</b>, July 10, 2025.</li>
+            <li value="3"><b>G. Groom Name</b>, Personal Communication, Phone: <b>+60-13-9876543</b>, July 10, 2025.</li>
+            <li value="4">Event Coordinator, WhatsApp Communication, <b>+60-14-1122334</b>, July 10, 2025.</li>
+        </ol>
+    </div>
+</div> <div class="paper">
+    <div class="appendix-content"> <div class="appendix-title">Guestbook Quotes and Messages</div>
+        <p>This appendix contains the raw qualitative data collected through the interactive guestbook system (Subsection I-B). These messages provide sentimental insights from the invited population.</p>
+        <table id="guestbookTable" style="margin-top: 12pt;">
+            <tr><th>[#]</th><th>Name</th><th>Quote / Message</th></tr>
+        </table>
+        <p style="text-align:center; font-size:9pt; margin-bottom:12pt;">Table II. Guestbook Quotes and Messages</p>
+    </div>
+</div>
+<script>
+    const MAX_CAPACITY = 1000;
+    let confirmedAttendees = 0;
+    let quoteCount = 0;
+
+    // Target Wedding Date (20 July 2026 at 12:00 PM GMT+8)
+    const WEDDING_DATE = new Date("July 20, 2026 12:00:00 GMT+0800").getTime();
+
+    const initialAttendeesData = [
+        { name: "A. Family", status: "Will Attend" },
+        { name: "C. Colleague", status: "Cannot Attend" },
+        { name: "F. Friend", status: "Will Attend" }
+    ];
+    const initialQuotes = [
+        { name: "P. Parent", quote: "May your life be a beautiful journey together." },
+        { name: "S. Sibling", quote: "So happy for you both! Congrats!" }
+    ];
+
+    // =================== MODAL FUNCTIONS ===================
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Close modals if the user clicks anywhere outside of them
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+
+    // =================== FORM LOGIC ===================
+
+    function updateRemainingSlots() {
+        const slotsLeft = MAX_CAPACITY - confirmedAttendees;
+        document.getElementById("remainingSlotsDisplay").innerText = slotsLeft + " Slots Remaining";
+    }
+
+    function addAttendee(name, status) {
+        // Only increase count if the status is "Will Attend"
+        if (status === "Will Attend") {
+            confirmedAttendees++;
+        }
+        updateRemainingSlots();
+    }
+
+    function addQuote(name, quote) {
+        quoteCount++;
+        const table = document.getElementById("guestbookTable");
+        const row = table.insertRow();
+        row.insertCell(0).innerText = quoteCount;
+        row.insertCell(1).innerText = name;
+        row.insertCell(2).innerText = quote;
+    }
+
+    // =================== COUNTDOWN LOGIC ===================
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = WEDDING_DATE - now;
+
+        if (distance < 0) {
+            document.getElementById("countdownPage").querySelector('.countdown-title').innerText = "The Union Has Commenced!";
+            document.getElementById("days").innerText = "00";
+            document.getElementById("hours").innerText = "00";
+            document.getElementById("minutes").innerText = "00";
+            document.getElementById("seconds").innerText = "00";
+            clearInterval(countdownInterval);
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").innerText = days.toString().padStart(2, '0');
+        document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+    }
+
+    let countdownInterval;
+
+    function toggleCountdown(show) {
+        const countdownPage = document.getElementById("countdownPage");
+        const paperContainer = document.querySelectorAll(".paper");
+        const countdownButton = document.getElementById("countdownButton");
+
+        if (show) {
+            // Show countdown, hide paper
+            countdownPage.classList.add('visible');
+            paperContainer.forEach(p => p.style.display = 'none');
+            countdownButton.style.display = 'none';
+            // Start the clock
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        } else {
+            // Hide countdown, show paper
+            countdownPage.classList.remove('visible');
+            paperContainer.forEach(p => p.style.display = 'grid');
+            countdownButton.style.display = 'block';
+            // Stop the clock
+            clearInterval(countdownInterval);
+        }
+    }
+    // =================== END COUNTDOWN LOGIC ===================
+
+
+    // Event Listeners for Forms
+    document.getElementById("attendanceForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("attendeeName").value;
+        const status = document.querySelector('input[name="attend"]:checked').value;
+
+        addAttendee(name, status);
+
+        // Populate modal with status and open it
+        document.getElementById("rsvpStatus").innerText = status;
+        openModal('rsvpModal');
+
+        document.getElementById("attendanceForm").reset();
+    });
+
+    document.getElementById("guestbookForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("guestbookName").value;
+        const quote = document.getElementById("guestbookQuote").value;
+
+        addQuote(name, quote);
+
+        // Open the quote success modal
+        openModal('quoteModal');
+
+        document.getElementById("guestbookForm").reset();
+    });
+
+    // Initial data loading
+    document.addEventListener("DOMContentLoaded", function() {
+        initialAttendeesData.forEach(function(attendee) {
+            addAttendee(attendee.name, attendee.status);
+        });
+
+        initialQuotes.forEach(function(entry) {
+            addQuote(entry.name, entry.quote);
+        });
+
+        updateRemainingSlots();
+    });
+</script>
+
+</body>
+</html>

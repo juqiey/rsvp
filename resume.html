@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Life Partnership Resume - B. Bride & G. Groom</title>
+    <style>
+        /* =================== GENERAL SETUP & CONTAINERS =================== */
+        body {
+            background: #f8f8f8;
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Resume Container - Simulating an 8.5" x 11" page */
+        .resume {
+            width: 8.5in;
+            background: #fff;
+            padding: 40px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #333;
+            /* Two-column layout: 30% for sidebar, 70% for main content */
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            column-gap: 30px;
+            max-width: 900px;
+            min-height: 11in;
+            position: relative;
+        }
+
+        /* Sidebar Styling (Left Column) */
+        .sidebar {
+            grid-column: 1 / 2;
+            background-color: #f0f0f0; /* Light grey background for visual separation */
+            padding: 20px;
+            border-radius: 5px;
+            height: 100%; /* Ensure it spans the full height */
+        }
+
+        /* Main Content Styling (Right Column) */
+        .main-content {
+            grid-column: 2 / 3;
+            padding: 20px 0;
+        }
+
+        /* =================== HEADER & TITLES =================== */
+        .header {
+            grid-column: 1 / -1; /* Spans both columns for full-width header */
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .name-title {
+            font-size: 28pt;
+            font-weight: bold;
+            color: #004c99; /* Professional Blue */
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14pt;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        /* Section Headings */
+        .section-heading {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #004c99;
+            border-bottom: 2px solid #004c99;
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Skills/Details List */
+        .skill-list, .details-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 15px;
+        }
+        .skill-list li, .details-list li {
+            margin-bottom: 8px;
+            padding-left: 10px;
+            position: relative;
+        }
+        .skill-list li::before, .details-list li::before {
+            content: "•";
+            color: #004c99;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* =================== FORMS/INTERACTIONS (RSVP as an 'Interview' Form) =================== */
+        .interview-form-container {
+            padding: 15px;
+            margin-top: 15px;
+            background: #e6f0ff; /* Very light blue highlight */
+            border: 1px solid #004c99;
+            border-radius: 5px;
+        }
+        .interview-form-container label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 3px;
+            font-size: 10pt;
+        }
+        .interview-form-container input[type="text"],
+        .interview-form-container input[type="email"],
+        .interview-form-container textarea {
+            width: calc(100% - 10px);
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 10pt;
+        }
+        .interview-form-container .radio-group { margin-top: 5px; font-size: 10pt; }
+        .interview-form-container input[type="submit"] {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #4CAF50; /* Green submit button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10pt;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .interview-form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* =================== MODAL/POPUP STYLES (Keep simple for resume context) =================== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-family: Arial, sans-serif;
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .close-btn:hover { color: #000; }
+
+        /* =================== COUNTDOWN BUTTON (Keep it discrete but accessible) =================== */
+        #countdownButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 15px;
+            background-color: #004c99; /* Blue to match theme */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11pt;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #countdownPage {
+            /* Styles for the full-page countdown are kept largely the same for visual impact */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e6f0ff, #cce0ff); /* Light blue gradient */
+            color: #004c99;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #countdownPage.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .countdown-title {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .countdown-timer {
+            display: flex;
+            gap: 20px;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #004c99;
+            padding: 20px 30px;
+            border-radius: 10px;
+            min-width: 120px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-number {
+            font-size: 4em;
+            font-weight: bold;
+            line-height: 1;
+            color: #004c99;
+        }
+
+        .time-label {
+            font-size: 1.2em;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        #backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11pt;
+        }
+
+        /* EXPERIENCE/PROJECT STYLING */
+        .experience-entry {
+            margin-bottom: 20px;
+        }
+        .experience-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #333;
+        }
+        .experience-subtitle {
+            font-size: 12pt;
+            font-style: italic;
+            color: #555;
+            margin-top: 3px;
+            margin-bottom: 8px;
+        }
+        .role {
+            font-weight: bold;
+            color: #004c99;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Footnotes for Guestbook Data */
+        .footnotes {
+            grid-column: 1 / -1;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #ccc;
+            font-size: 9pt;
+            /* FORCING PAGE BREAK */
+            page-break-before: always;
+        }
+        .footnotes p {
+            margin-bottom: 5px;
+        }
+        .footnotes table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .footnotes th, .footnotes td {
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: left;
+        }
+        .footnotes th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<button id="countdownButton" onclick="toggleCountdown(true)">View Partnership Timeline</button>
+
+<div id="countdownPage">
+    <button id="backButton" onclick="toggleCountdown(false)">Back to Resume</button>
+    <div class="countdown-title">Partnership Commencement Timeline</div>
+    <div class="countdown-timer">
+        <div class="time-box">
+            <span class="time-number" id="days">00</span>
+            <span class="time-label">Days</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="hours">00</span>
+            <span class="time-label">Hours</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="minutes">00</span>
+            <span class="time-label">Minutes</span>
+        </div>
+        <div class="time-box">
+            <span class="time-number" id="seconds">00</span>
+            <span class="time-label">Seconds</span>
+        </div>
+    </div>
+    <p style="margin-top: 30px; font-size: 1.2em; font-weight: bold;">
+        Scheduled Commencement: <b>20 July 2025 at 12:00 PM (GMT+8)</b>
+    </p>
+</div>
+
+<div id="rsvpModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('rsvpModal')">&times;</span>
+        <h2>Interview Confirmation</h2>
+        <p>Thank you for submitting your availability.</p>
+        <p>Your current status is:</p>
+        <p id="rsvpStatus" style="font-size: 1.1em; color: #4CAF50;"></p>
+        <p>Logistical preparations have been updated.</p>
+    </div>
+</div>
+
+<div id="quoteModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('quoteModal')">&times;</span>
+        <h2>Recommendation Submitted</h2>
+        <p>Thank you for your valuable textual submission!</p>
+        <p>Your recommendation has been successfully recorded in the Footnotes.</p>
+    </div>
+</div>
+
+
+<div class="resume" id="resumeContainer">
+
+    <div class="header">
+        <div class="name-title">B. Bride Name & G. Groom Name</div>
+        <div class="subtitle">Partnership Candidates | Event Management Specialists</div>
+    </div>
+
+    <div class="sidebar">
+        <div class="section-heading">Contact Information</div>
+        <p><b>B. Bride Name</b><br>Email: bride@example.com<br>Phone: +60-12-3456789 (Ref. [2])</p>
+        <p><b>G. Groom Name</b><br>Email: groom@example.com<br>Phone: +60-13-9876543 (Ref. [3])</p>
+        <p><b>Location:</b> Kuala Terengganu, Malaysia</p>
+
+        <div class="section-heading">Key Project Skills</div>
+        <ul class="skill-list">
+            <li>Commitment & Shared Purpose (Ref. Introduction)</li>
+            <li>Real-Time Interaction Systems (Digital RSVP)</li>
+            <li>Qualitative Data Capture (Guestbook)</li>
+            <li>Venue Logistical Planning ($N_{max}=1000$)</li>
+            <li>Aesthetic Control Variable Management (Attire)</li>
+            <li>Time-Series Data Management (Countdown Timer)</li>
+        </ul>
+
+        <div class="section-heading">Project Status: Availability</div>
+        <p>Maximum Capacity: <b>1000 Slots</b></p>
+        <p>Remaining Availability:</p>
+        <p style="text-align:center; font-size:16pt; font-weight:bold; margin: 5pt 0; color: #cc0000;" id="remainingSlotsDisplay">
+            Calculating...
+        </p>
+
+        <div class="section-heading">Schedule Details</div>
+        <ul class="details-list">
+            <li><b>Date:</b> Sunday, 20 July 2025</li>
+            <li><b>Reception:</b> 12:00 PM - 4:00 PM (GMT+8)</li>
+            <li><b>Location:</b> Dewan Seri Harmoni, Kuala Terengganu</li>
+            <li><b>Attire:</b> Formal / Traditional (White & Gold Theme)</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+
+        <div class="section-heading">Professional Summary / Objective</div>
+        <p>Highly committed individuals seeking to formally commence a lifelong Life Partnership project. Proven ability to transition analog processes to efficient digital systems, demonstrated by the implementation of a comprehensive web-based platform for attendance confirmation and qualitative feedback capture, all documented within a structured framework.</p>
+
+        <div class="section-heading">Project Experience</div>
+
+        <div class="experience-entry">
+            <div class="experience-title">Matrimonial Union & Event System Implementation</div>
+            <div class="experience-subtitle">Independent Research Project, Kuala Terengganu, Malaysia | 2025 (Ongoing)</div>
+            <p class="role">Roles: System Designer, Lead Administrator, Primary Beneficiaries</p>
+            <ul class="skill-list">
+                <li>Designed and implemented a <b>Dual-Form System</b> using HTML/CSS/JavaScript for efficient data collection.</li>
+                <li>Managed **Quantitative Data** (RSVP) for immediate logistical planning, catering to a projected capacity of $N_{max}=1000$.</li>
+                <li>Created a **Qualitative Textual Submission** module (Guestbook) for capturing valuable post-event sentiments and testimonials (Ref. Footnotes).</li>
+                <li>Established key event parameters, including location selection for optimal accessibility and the definition of strict attire specifications (White and Gold Theme).</li>
+            </ul>
+        </div>
+
+        <div class="section-heading">Interview / Attendance Form (RSVP)</div>
+        <p>Please complete the form below to confirm your status regarding participation in the project's commencement ceremony.</p>
+        <div class="interview-form-container">
+            <form id="attendanceForm">
+                <label>Interviewer/Guest Name:</label><input type="text" id="attendeeName" required>
+                <label>Contact Email:</label><input type="email" id="attendeeEmail" required>
+                <label>Attendance Status (Will you be present for the commencement?):</label>
+                <div class="radio-group">
+                    <input type="radio" name="attend" value="Will Attend" required> Confirmed: Will Attend<br>
+                    <input type="radio" name="attend" value="Cannot Attend"> Regretfully: Cannot Attend
+                </div>
+                <input type="submit" value="Submit Interview Confirmation">
+            </form>
+        </div>
+
+        <div class="section-heading">Recommendation (Guestbook Quote)</div>
+        <p>Submit a personalized textual recommendation or quote for the Partnership Candidates.</p>
+        <div class="interview-form-container">
+            <form id="guestbookForm">
+                <label>Your Name:</label><input type="text" id="guestbookName" required>
+                <label>Quote / Message:</label><textarea id="guestbookQuote" rows="3" required></textarea>
+                <input type="submit" value="Submit Recommendation">
+            </form>
+        </div>
+    </div>
+
+    <div class="footnotes">
+        <div class="section-heading" style="margin-top:0;">Footnotes and Recommendations (Qualitative Data)</div>
+        <p>The following table contains raw qualitative data collected through the interactive recommendation submission system.</p>
+        <table id="guestbookTable">
+            <tr><th>[#]</th><th>Name</th><th>Recommendation/Quote</th></tr>
+        </table>
+    </div>
+
+</div>
+
+<script>
+    // --- JavaScript Logic (Copied from original, adapted for new context) ---
+
+    const MAX_CAPACITY = 1000;
+    let confirmedAttendees = 0;
+    let quoteCount = 0;
+
+    // Target Wedding Date (20 July 2025 at 12:00 PM GMT+8)
+    const WEDDING_DATE = new Date("July 20, 2025 12:00:00 GMT+0800").getTime();
+
+    const initialAttendeesData = [
+        { name: "A. Family", status: "Will Attend" },
+        { name: "C. Colleague", status: "Cannot Attend" },
+        { name: "F. Friend", status: "Will Attend" }
+    ];
+    const initialQuotes = [
+        { name: "P. Parent", quote: "May your life be a beautiful journey together." },
+        { name: "S. Sibling", quote: "So happy for you both! Congrats!" }
+    ];
+
+    // =================== MODAL FUNCTIONS ===================
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Close modals if the user clicks anywhere outside of them
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+
+    // =================== FORM LOGIC ===================
+
+    function updateRemainingSlots() {
+        const slotsLeft = MAX_CAPACITY - confirmedAttendees;
+        document.getElementById("remainingSlotsDisplay").innerText = slotsLeft + " Slots Remaining";
+    }
+
+    function addAttendee(name, status) {
+        // Only increase count if the status is "Will Attend"
+        if (status === "Will Attend") {
+            confirmedAttendees++;
+        }
+        updateRemainingSlots();
+    }
+
+    function addQuote(name, quote) {
+        quoteCount++;
+        const table = document.getElementById("guestbookTable");
+        const row = table.insertRow();
+        row.insertCell(0).innerText = quoteCount;
+        row.insertCell(1).innerText = name;
+        row.insertCell(2).innerText = quote;
+    }
+
+    // =================== COUNTDOWN LOGIC ===================
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = WEDDING_DATE - now;
+
+        if (distance < 0) {
+            document.getElementById("countdownPage").querySelector('.countdown-title').innerText = "The Partnership Has Commenced!";
+            document.getElementById("days").innerText = "00";
+            document.getElementById("hours").innerText = "00";
+            document.getElementById("minutes").innerText = "00";
+            document.getElementById("seconds").innerText = "00";
+            clearInterval(countdownInterval);
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").innerText = days.toString().padStart(2, '0');
+        document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+        document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+        document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+    }
+
+    let countdownInterval;
+
+    function toggleCountdown(show) {
+        const countdownPage = document.getElementById("countdownPage");
+        const resumeContainer = document.getElementById("resumeContainer");
+        const countdownButton = document.getElementById("countdownButton");
+
+        if (show) {
+            // Show countdown, hide resume
+            countdownPage.classList.add('visible');
+            resumeContainer.style.display = 'none';
+            countdownButton.style.display = 'none';
+            // Start the clock
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1000);
+        } else {
+            // Hide countdown, show resume
+            countdownPage.classList.remove('visible');
+            resumeContainer.style.display = 'grid'; // Restore grid display
+            countdownButton.style.display = 'block';
+            // Stop the clock
+            clearInterval(countdownInterval);
+        }
+    }
+    // =================== END COUNTDOWN LOGIC ===================
+
+
+    // Event Listeners for Forms
+    document.getElementById("attendanceForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("attendeeName").value;
+        const status = document.querySelector('input[name="attend"]:checked').value;
+
+        addAttendee(name, status);
+
+        // Populate modal with status and open it
+        document.getElementById("rsvpStatus").innerText = status;
+        openModal('rsvpModal');
+
+        document.getElementById("attendanceForm").reset();
+    });
+
+    document.getElementById("guestbookForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("guestbookName").value;
+        const quote = document.getElementById("guestbookQuote").value;
+
+        addQuote(name, quote);
+
+        // Open the quote success modal
+        openModal('quoteModal');
+
+        document.getElementById("guestbookForm").reset();
+    });
+
+    // Initial data loading
+    document.addEventListener("DOMContentLoaded", function() {
+        initialAttendeesData.forEach(function(attendee) {
+            addAttendee(attendee.name, attendee.status);
+        });
+
+        initialQuotes.forEach(function(entry) {
+            addQuote(entry.name, entry.quote);
+        });
+
+        updateRemainingSlots();
+    });
+</script>
+
+</body>
+</html>

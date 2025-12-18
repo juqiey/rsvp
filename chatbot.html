@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Wedding RSVP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS STYLES --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #chatbot-container {
+            width: 100%;
+            max-width: 450px;
+            height: 80vh;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #header {
+            background-color: #5d9cec; /* A nice, wedding-friendly blue */
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 3px solid #4a89dc;
+        }
+
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Message Styling */
+        .message {
+            max-width: 80%;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .bot-message {
+            background-color: #e6e9ed; /* Light gray for the bot */
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #5d9cec; /* Blue for the user */
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* Input/Option Area */
+        #input-area {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+
+        #input-text {
+            width: calc(100% - 70px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-family: inherit;
+        }
+
+        #send-button {
+            width: 60px;
+            padding: 10px;
+            background-color: #5d9cec;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 600;
+        }
+
+        #send-button:hover {
+            background-color: #4a89dc;
+        }
+
+        /* Options/Buttons */
+        #options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .option-button {
+            padding: 10px 15px;
+            background-color: #a0d468; /* Green for options */
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: 400;
+        }
+
+        .option-button:hover {
+            background-color: #8cc152;
+        }
+
+        /* Hide the text input initially */
+        #input-area.hidden #input-text,
+        #input-area.hidden #send-button {
+            display: none;
+        }
+
+        /* Typing indicator (simple pulsing effect) */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #777;
+        }
+
+        .dot {
+            height: 8px;
+            width: 8px;
+            background-color: #777;
+            border-radius: 50%;
+            margin-right: 5px;
+            animation: pulse 1s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="chatbot-container">
+    <div id="header">
+        💍 Wedding RSVP Bot (Name & Name)
+    </div>
+
+    <div id="chat-window">
+    </div>
+
+    <div id="input-area">
+        <div id="options-container">
+        </div>
+        <input type="text" id="input-text" placeholder="Type your answer...">
+        <button id="send-button">Send</button>
+    </div>
+</div>
+
+<script>
+    // --- JAVASCRIPT LOGIC ---
+    const chatWindow = document.getElementById('chat-window');
+    const optionsContainer = document.getElementById('options-container');
+    const inputArea = document.getElementById('input-area');
+    const inputText = document.getElementById('input-text');
+    const sendButton = document.getElementById('send-button');
+
+    // RSVP Data structure to store user's answers
+    const rsvpData = {};
+
+    // Chatbot Conversation Flow Definition
+    const flow = {
+        start: {
+            message: "Hello! I'm your virtual RSVP assistant for [Bride's Name] and [Groom's Name]'s wedding. What is your **full name**?",
+            type: 'text',
+            saveAs: 'fullName',
+            next: 'attendConfirmation'
+        },
+        attendConfirmation: {
+            message: (data) => `Thanks, ${data.fullName}! Will you be attending the wedding on [Date] at [Venue]?`,
+            type: 'options',
+            options: [
+                { text: 'Yes, I will be there!', value: 'Attending', next: 'guestCount' },
+                { text: 'Regretfully, no.', value: 'Not Attending', next: 'finalMessage' }
+            ],
+            saveAs: 'isAttending'
+        },
+        guestCount: {
+            message: "Fantastic! Including yourself, how many people will be in your party? (e.g., '1' if just you, '2' for you and a partner, etc.)",
+            type: 'text',
+            saveAs: 'guestCount',
+            next: 'mealPreference'
+        },
+        mealPreference: {
+            message: (data) => `Great! For your ${data.guestCount} guests, please select the preferred main course.`,
+            type: 'options',
+            options: [
+                { text: 'Beef Tenderloin', value: 'Beef', next: 'dietaryRestrictions' },
+                { text: 'Roasted Chicken', value: 'Chicken', next: 'dietaryRestrictions' },
+                { text: 'Vegetarian Pasta', value: 'Veggie', next: 'dietaryRestrictions' }
+            ],
+            saveAs: 'mealChoice'
+        },
+        dietaryRestrictions: {
+            message: "Do you or anyone in your party have any **dietary restrictions** or allergies? If not, just type 'None'.",
+            type: 'text',
+            saveAs: 'dietaryRestrictions',
+            next: 'guestBookQuote' // New step added here
+        },
+        // --- NEW STEP FOR GUESTBOOK QUOTE ---
+        guestBookQuote: {
+            message: "Just one more thing! We're putting together a keepsake guestbook. Could you share a short **piece of advice, a favourite memory, or a quote** for us? (Type 'Skip' if you prefer not to.)",
+            type: 'text',
+            saveAs: 'guestBookMessage',
+            next: 'closingMessage'
+        },
+        // ------------------------------------
+        closingMessage: {
+            message: (data) => `Understood. Thank you, ${data.fullName}! Your RSVP is complete. We can't wait to celebrate with you!`,
+            type: 'final'
+        },
+        finalMessage: {
+            message: (data) => `We are sorry you can't make it, ${data.fullName}. We will miss you! Thank you for letting us know.`,
+            type: 'final'
+        }
+    };
+
+    let currentStep = 'start';
+
+    // --- Core Functions ---
+
+    /** Creates and adds a message bubble to the chat window */
+    function addMessage(text, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.classList.add(sender === 'bot' ? 'bot-message' : 'user-message');
+        messageElement.innerHTML = text;
+        chatWindow.appendChild(messageElement);
+        // Scroll to the latest message
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    /** Shows a simple typing indicator */
+    function showTypingIndicator() {
+        const indicator = document.createElement('div');
+        indicator.classList.add('typing-indicator');
+        indicator.id = 'typing-indicator';
+        indicator.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+        chatWindow.appendChild(indicator);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    /** Removes the typing indicator */
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+
+    /** Clears and displays the available options/input for the current step */
+    function displayOptions(step) {
+        optionsContainer.innerHTML = '';
+        inputArea.classList.add('hidden'); // Default to hiding text input
+
+        if (step.type === 'options') {
+            step.options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.textContent = option.text;
+                button.onclick = () => handleUserInput(option.value, step, option.next);
+                optionsContainer.appendChild(button);
+            });
+        } else if (step.type === 'text') {
+            inputArea.classList.remove('hidden'); // Show text input
+            inputText.focus();
+        }
+    }
+
+    /** Advances the conversation to the next step */
+    function nextStep() {
+        const step = flow[currentStep];
+
+        if (!step || step.type === 'final') {
+            // For a real application, you'd send rsvpData to a server here (using fetch/AJAX)
+            // console.log("Final RSVP Data:", rsvpData);
+            inputArea.innerHTML = '<h4>✅ RSVP Submitted!</h4>';
+            inputArea.style.textAlign = 'center';
+            return;
+        }
+
+        showTypingIndicator();
+
+        setTimeout(() => {
+            removeTypingIndicator();
+            // Determine the message text (it can be a string or a function)
+            const messageText = typeof step.message === 'function' ? step.message(rsvpData) : step.message;
+            addMessage(messageText, 'bot');
+            displayOptions(step);
+        }, 1000); // Simulate a 1 second delay for the bot to "think"
+    }
+
+    /** Handles user input, either from button click or text submission */
+    function handleUserInput(value, currentStepData, next) {
+        // Display user's input
+        addMessage(value, 'user');
+
+        // Clear options/input
+        optionsContainer.innerHTML = '';
+        inputArea.classList.add('hidden');
+
+        // Save the answer
+        if (currentStepData.saveAs) {
+            rsvpData[currentStepData.saveAs] = value;
+        }
+
+        // Set the next step in the flow
+        currentStep = next || currentStepData.next;
+
+        // Advance the conversation
+        nextStep();
+    }
+
+    // --- Event Listeners ---
+
+    // Handle text input submission (via Send button or Enter key)
+    sendButton.addEventListener('click', () => {
+        const value = inputText.value.trim();
+        if (value) {
+            handleUserInput(value, flow[currentStep], flow[currentStep].next);
+            inputText.value = ''; // Clear the input field
+        }
+    });
+
+    inputText.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendButton.click();
+        }
+    });
+
+    // --- Initialization ---
+    nextStep(); // Start the conversation!
+</script>
+</body>
+</html>
